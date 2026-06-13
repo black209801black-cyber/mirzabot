@@ -4588,15 +4588,31 @@ if ($user['step'] == "createusertest" || preg_match('/locationtest_(.*)/', $data
             sendmessage($from_id, strtr($textbotlang['extracted']['index_php']['depositAmountRange'], ['{mainbalance}' => $mainbalance, '{maxbalance}' => $maxbalance]), null, 'HTML');
             return;
         }
-        $cardQuery = $pdo->prepare("SELECT * FROM card_number  ORDER BY RAND() LIMIT 1");
-        $cardQuery->execute();
+
+        $countinvoice_stmt = $pdo->prepare("SELECT COUNT(*) FROM invoice WHERE id_user = ? AND (Status = 'active' OR Status = 'end_of_time' OR Status = 'end_of_volume' OR Status = 'sendedwarn' OR Status = 'send_on_hold')");
+        $countinvoice_stmt->execute([$from_id]);
+        $successful_purchases = $countinvoice_stmt->fetchColumn();
+
+        $target_card_type = ($successful_purchases < 2) ? 'new' : 'old';
+
+        $cardQuery = $pdo->prepare("SELECT * FROM card_number WHERE card_type = ? OR card_type = 'all' ORDER BY RAND() LIMIT 1");
+        $cardQuery->execute([$target_card_type]);
+
+        $card_info = $cardQuery->fetch(PDO::FETCH_ASSOC);
+
+        if (!$card_info) {
+            // Fallback in case no specific type card is found
+            $cardQuery = $pdo->prepare("SELECT * FROM card_number ORDER BY RAND() LIMIT 1");
+            $cardQuery->execute();
+            $card_info = $cardQuery->fetch(PDO::FETCH_ASSOC);
+        }
+
         if ($cardQuery === false) {
             error_log('Failed to fetch card_number data: ' . implode(' ', $pdo->errorInfo()));
             sendmessage($from_id, $textbotlang['extracted']['index_php']['bankCardRetrieveError'], null, 'HTML');
             return;
         }
 
-        $card_info = ($cardQuery)->fetch(PDO::FETCH_ASSOC);
         if (!$card_info || empty($card_info['cardnumber']) || empty($card_info['namecard'])) {
             sendmessage($from_id, $textbotlang['extracted']['index_php']['noActiveBankCard'], null, 'HTML');
             /* freed */

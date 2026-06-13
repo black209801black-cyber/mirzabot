@@ -1038,6 +1038,7 @@ try {
         }
         $columnInfo = null;
     }
+    addFieldToTable("card_number", "card_type", "all", "VARCHAR(50)");
 } catch (Exception $e) {
     file_put_contents('error_log card_number', $e->getMessage());
 }

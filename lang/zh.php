@@ -821,6 +821,10 @@ support 权限级别可访问用户服务和客服消息回复部分',
                         'ask_send_user_card_1' => '💳 请发送您的银行卡号
 
 ⚠️ 请注意，您可以定义多个卡号；如果定义了多个卡号，将随机向用户显示其中一个卡号',
+                        'ask_send_user_card_type' => '📌 请指定哪些用户可以看到此卡？',
+                        'card_type_new' => '新用户 (购买1和2次)',
+                        'card_type_old' => '老用户 (购买3次以上)',
+                        'card_type_all' => '所有用户',
                         'err_card_number_must' => '❌ 卡号必须为数字。',
                         'err_card' => '❌ 该卡号已存在于数据库中。',
                         'err_card_name_register_please' => '❌ 卡号注册失败。请重试或联系客服。',
