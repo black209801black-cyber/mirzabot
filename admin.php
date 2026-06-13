@@ -3421,13 +3421,32 @@ elseif ($datain == "systemsms") {
     update("user", "Processing_value", $text, "id", $from_id);
     step('getnamecard', $from_id);
 } elseif ($user['step'] == "getnamecard") {
+    update("user", "Processing_value_one", $text, "id", $from_id);
+    $card_type_keyboard = json_encode([
+        'inline_keyboard' => [
+            [
+                ['text' => $textbotlang['Admin']['adminphp']['card_type_new'], 'callback_data' => "cardtype_new"],
+                ['text' => $textbotlang['Admin']['adminphp']['card_type_old'], 'callback_data' => "cardtype_old"],
+            ],
+            [
+                ['text' => $textbotlang['Admin']['adminphp']['card_type_all'], 'callback_data' => "cardtype_all"],
+            ]
+        ]
+    ]);
+    sendmessage($from_id, $textbotlang['Admin']['adminphp']['ask_send_user_card_type'], $card_type_keyboard, 'HTML');
+    step('getcardtype', $from_id);
+} elseif (preg_match('/cardtype_(\w+)/', $datain, $dataget) && $user['step'] == "getcardtype") {
+    $card_type = $dataget[1];
+    $card_number = $user['Processing_value'];
+    $name_card = $user['Processing_value_one'];
     try {
         if (function_exists('ensureCardNumberTableSupportsUnicode')) {
             ensureCardNumberTableSupportsUnicode();
         }
 
-        $stmt = $pdo->prepare("INSERT INTO card_number (cardnumber,namecard) VALUES (?,?)");
-        $stmt->execute([$user['Processing_value'], $text]);
+        $stmt = $pdo->prepare("INSERT INTO card_number (cardnumber,namecard,card_type) VALUES (?,?,?)");
+        $stmt->execute([$card_number, $name_card, $card_type]);
+        deletemessage($from_id, $message_id);
         sendmessage($from_id, $textbotlang['Admin']['SettingPayment']['saveCard'], $CartManage, 'HTML');
         step('home', $from_id);
     } catch (\PDOException $e) {

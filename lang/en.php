@@ -821,6 +821,10 @@ No: 0',
                         'ask_send_user_card_1' => '💳 Send your card number
 
 ⚠️ Note that you can define several card numbers; if you define multiple card numbers, the bot will show the user a random one from among them',
+                        'ask_send_user_card_type' => '📌 Specify which users should see this card?',
+                        'card_type_new' => 'New Users (Purchases 1 & 2)',
+                        'card_type_old' => 'Old Users (Purchases 3+)',
+                        'card_type_all' => 'All Users',
                         'err_card_number_must' => '❌ The card number must be numeric.',
                         'err_card' => '❌ The card number already exists in the database.',
                         'err_card_name_register_please' => '❌ Failed to register the card number. Please try again or contact support.',
